@@ -269,33 +269,34 @@ public class DirectoryManager implements DownloadNotification, UploadNotificatio
 
         if(FileUtils.isTempFile(path.getFileName())) {
             LOGGER.info("Tmp file, do nothing " + path.toString());
-        }
-
-        final Document document = pathToDocument.get(path.toString());
-        if (document == null) {
-            // new document
-            Document newDocument = new Document(nameFromPath(path), null, null, path.toString(),
-                    this.project.getWorkspaceID());
-            this.initDownloads.add(path.toString());
-            this.pathsInDownload.add(path.toString());
-            this.uploadService.upload(this, newDocument);
         } else {
-            if (!pathsInDownload.contains(document.getFilePath())) {
-                if (initDownloads.contains(document.getFilePath())) {
-                    this.initDownloads.remove(document.getFilePath());
-                } else {
-                    if (fileEvent.equals(FileEvent.CREATE) || fileEvent.equals(FileEvent.MODIFY)) {
-
-                        this.pathsInDownload.add(document.getFilePath());
-                        this.uploadService.upload(this, document);
-                    } else if (fileEvent.equals(FileEvent.DELETE)) {
-
-                        this.pathsInDownload.add(document.getFilePath());
-                        this.deleteService.delete(this,document);
-                    }
-                }
+            LOGGER.info("Not tmp file");
+            final Document document = pathToDocument.get(path.toString());
+            if (document == null) {
+                // new document
+                Document newDocument = new Document(nameFromPath(path), null, null, path.toString(),
+                        this.project.getWorkspaceID());
+                this.initDownloads.add(path.toString());
+                this.pathsInDownload.add(path.toString());
+                this.uploadService.upload(this, newDocument);
             } else {
-                LOGGER.info("Got event for path that is in download/delete state");
+                if (!pathsInDownload.contains(document.getFilePath())) {
+                    if (initDownloads.contains(document.getFilePath())) {
+                        this.initDownloads.remove(document.getFilePath());
+                    } else {
+                        if (fileEvent.equals(FileEvent.CREATE) || fileEvent.equals(FileEvent.MODIFY)) {
+
+                            this.pathsInDownload.add(document.getFilePath());
+                            this.uploadService.upload(this, document);
+                        } else if (fileEvent.equals(FileEvent.DELETE)) {
+
+                            this.pathsInDownload.add(document.getFilePath());
+                            this.deleteService.delete(this, document);
+                        }
+                    }
+                } else {
+                    LOGGER.info("Got event for path that is in download/delete state");
+                }
             }
         }
         System.out.println(path);
