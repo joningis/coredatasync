@@ -16,7 +16,7 @@ public class FileUtils {
 
     }
 
-    public static boolean isTempFile(final Path fileName) {
+    public static boolean isTempFile(final String fileName) {
         if(fileName.startsWith("~")) {
             return true;
         }

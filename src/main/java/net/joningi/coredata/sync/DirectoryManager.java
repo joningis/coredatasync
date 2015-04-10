@@ -267,7 +267,7 @@ public class DirectoryManager implements DownloadNotification, UploadNotificatio
         // This also protects from the events that happen when we are initializing the folder
         // after startup, create, modify, delete.
 
-        if(FileUtils.isTempFile(path.getFileName())) {
+        if(FileUtils.isTempFile(path.getFileName().toString())) {
             LOGGER.info("Tmp file, do nothing " + path.toString());
         } else {
             LOGGER.info("Not tmp file");
