@@ -4,6 +4,8 @@
  */
 package net.joningi.coredata.sync.utils;
 
+import java.nio.file.Path;
+
 public class FileUtils {
     public static String removeFileEnding(final String name) {
         if(name.contains(".")) {
@@ -12,5 +14,12 @@ public class FileUtils {
             return name;
         }
 
+    }
+
+    public static boolean isTempFile(final Path fileName) {
+        if(fileName.startsWith("~")) {
+            return true;
+        }
+        return false;
     }
 }

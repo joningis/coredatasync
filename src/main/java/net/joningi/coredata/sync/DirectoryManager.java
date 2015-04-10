@@ -13,6 +13,7 @@ import net.joningi.coredata.sync.io.DownloadNotification;
 import net.joningi.coredata.sync.io.DownloadService;
 import net.joningi.coredata.sync.io.UploadNotification;
 import net.joningi.coredata.sync.io.UploadService;
+import net.joningi.coredata.sync.utils.FileUtils;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -266,6 +267,9 @@ public class DirectoryManager implements DownloadNotification, UploadNotificatio
         // This also protects from the events that happen when we are initializing the folder
         // after startup, create, modify, delete.
 
+        if(FileUtils.isTempFile(path.getFileName())) {
+            LOGGER.info("Tmp file, do nothing " + path.toString());
+        }
 
         final Document document = pathToDocument.get(path.toString());
         if (document == null) {
@@ -285,6 +289,7 @@ public class DirectoryManager implements DownloadNotification, UploadNotificatio
                         this.pathsInDownload.add(document.getFilePath());
                         this.uploadService.upload(this, document);
                     } else if (fileEvent.equals(FileEvent.DELETE)) {
+
                         this.pathsInDownload.add(document.getFilePath());
                         this.deleteService.delete(this,document);
                     }
