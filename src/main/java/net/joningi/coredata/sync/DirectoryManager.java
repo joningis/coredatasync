@@ -18,6 +18,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -96,6 +97,7 @@ public class DirectoryManager implements DownloadNotification, UploadNotificatio
         document.setDownloaded();
         this.pathsInDownload.remove(document.getFilePath());
         LOGGER.info("Finished downloading document " + document.getName());
+        updateModifiedDate(document);
     }
 
     @Override
@@ -119,6 +121,7 @@ public class DirectoryManager implements DownloadNotification, UploadNotificatio
             LOGGER.info("Updated info for new document " + document.getName());
         }
         document.setDownloaded();
+        updateModifiedDate(document);
     }
 
     @Override
@@ -129,7 +132,14 @@ public class DirectoryManager implements DownloadNotification, UploadNotificatio
             this.uuidDocuments.remove(document.getUUID());
             this.pathToDocument.remove(document.getFilePath());
         }
+        document.setDownloaded();
         LOGGER.info("Finished deleting document " + document.getName());
+        updateModifiedDate(document);
+    }
+
+    private void updateModifiedDate(final Document document) {
+        File file = new File(document.getFilePath());
+        document.setLastModifiedLocally(file.lastModified());
     }
 
     /**
@@ -170,13 +180,23 @@ public class DirectoryManager implements DownloadNotification, UploadNotificatio
             for (String line : lines) {
                 Document document = gson.fromJson(line, Document.class);
                 if (currentDocuments.containsKey(document.getUUID())) {
+                    File localFile = new File(document.getFilePath());
+
+                    // The current version first checks if we have updated version online, then checks if our local version is more
+                    // resent then the one online. So server has higher priority then local
+                    // TODO(joningi): Change this to avoid overwriting
                     if (!currentDocuments.get(document.getUUID()).getSnapshotID().equals(document.getSnapshotID())) {
                         // We have updated version of the file online
-                        //TODO(joningi): Do we always want to delete the local copy, what if it has been changed and not uploaded ?
                         initDownloadDocument(document);
 
                         LOGGER.info("File has been changed " + document.getName() + "(" + document.getUUID() + ")");
-                    } else {
+                    } else if(localFile.lastModified() > document.getLastModifiedLocally()) {
+                        // The file has local changes that have not been sent to the server
+                        LOGGER.info("Local file has been changed " + document.getName() + "(" + document.getUUID() + ")");
+                        this.pathsInDownload.add(document.getFilePath());
+                        this.uploadService.upload(this, document);
+                    }
+                    else {
                         LOGGER.info("File is already the most recent version " + document.getName() + "(" + document.getUUID() + ")");
                     }
                     currentDocuments.remove(document.getUUID());

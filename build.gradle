@@ -6,8 +6,9 @@ apply plugin: 'jacoco'
 apply plugin: 'checkstyle'
 //apply plugin: 'pmd'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin:'application'
 
-
+mainClassName = "net.joningi.coredata.sync.Runner"
 sourceCompatibility = 1.7
 version = '0.1b'
 

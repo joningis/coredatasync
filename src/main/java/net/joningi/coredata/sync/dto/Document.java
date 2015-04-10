@@ -14,6 +14,7 @@ public class Document {
     private String snapshotID;
     private boolean downloaded;
     private String parentUUID;
+    private long lastModifiedLocally;
 
     public Document(final String name,
                     final String id,
@@ -70,5 +71,13 @@ public class Document {
 
     public void setUUID(final String UUID) {
         this.id = UUID;
+    }
+
+    public void setLastModifiedLocally(final long lastModified) {
+        this.lastModifiedLocally = lastModified;
+    }
+
+    public long getLastModifiedLocally() {
+        return lastModifiedLocally;
     }
 }

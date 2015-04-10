@@ -13,11 +13,8 @@ import net.joningi.coredata.sync.io.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 import javax.swing.*;
@@ -28,7 +25,7 @@ import com.google.common.collect.Maps;
 
 public class Runner {
 
-    static Map<Project, DirectoryManager> monitoredProjects ;
+    static Map<Project, DirectoryManager> monitoredProjects;
 
     public static void main(String[] args) throws IOException, ConfigException {
 
@@ -37,7 +34,7 @@ public class Runner {
         String username = "";
         String password = "";
         final CoredataClient client = ClientBuilder.newClient(
-                "http://localhost:8100", username, password);
+                "http://10.1.0.66:8100", username, password);
         DownloadService downloadService = new DownloadServiceImpl(client);
         UploadService uploadService = new UploadServiceImpl(client);
         DeleteService deleteService = new DeleteServiceImpl(client);
@@ -111,14 +108,15 @@ public class Runner {
         final SystemTray tray = SystemTray.getSystemTray();
 
 
-
         // Create a popup menu components
         MenuItem aboutItem = new MenuItem("About");
+        MenuItem manageProjects = new MenuItem("Manage projects");
         Menu displayMenu = new Menu("Local projects");
         MenuItem exitItem = new MenuItem("Exit");
 
         //Add components to popup menu
         popup.add(aboutItem);
+        popup.add(manageProjects);
         popup.add(displayMenu);
 
         ActionListener listener = new ActionListener() {
@@ -176,6 +174,26 @@ public class Runner {
         });
 
 
+        manageProjects.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                /*
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        SwingSelectProjects.showFrame();
+                    }
+                });
+/*
+                //Create and set up the content pane.
+                SwingSelectProjects newContentPane = new SwingSelectProjects();
+                newContentPane.setOpaque(true); //content panes must be opaque
+
+                JDialog dialog = new JDialog();
+                dialog.setContentPane(newContentPane);
+                dialog.setVisible(true);
+                */
+            }
+        });
 
 
         exitItem.addActionListener(new ActionListener() {
@@ -192,7 +210,7 @@ public class Runner {
 
     protected static Image createImage(String path) {
 
-        String description="";
+        String description = "";
         String imageURL = path;
         if (imageURL == null) {
             System.err.println("Resource not found: " + path);
