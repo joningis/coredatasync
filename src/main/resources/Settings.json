@@ -1,0 +1,17 @@
+{
+  "projects": [
+    {
+      "name": "Verkefni",
+      "uuid": "12175de6-df22-11e4-a242-6003088b5c52",
+      "navString": "dir/Active%20Projects/Space/Verkefni%20—%202015-1",
+      "folderPath": "/tmp/coredata/Verkefni/"
+    },
+    {
+      "name": "Verkefni2",
+      "uuid": "5a41f1b0-df2e-11e4-8ed7-6003088b5c52",
+      "navString": "dir/Active%20Projects/Space/Verkefni2%20—%202015-2",
+      "folderPath": "/tmp/coredata/Verkefni2/"
+    }
+  ]
+}
+
